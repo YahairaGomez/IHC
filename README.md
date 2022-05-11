@@ -28,12 +28,12 @@ Para instalar y correr el proyecto descargue la carpeta la carpeta completa y ej
 ### Demo 🔧
 La primera ventana con la que el usuario interactúa es la ventana de instrucciones donde se indica brevemente cómo jugar el juego y el objetivo que se debe cumplir para ganar. Una vez que haya leído las instrucciones presiona el botón "Continuar" para ir a la siguiente ventana.
 <p align="center">
-            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana1.png" width= 400>
+            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana1.png" width= 800>
 </p>
 
 Esta ventana verifica si el usuario cumple con los requisitos requeridos (cámara y micrófono). La primera imagen (cámara) se pondrá de color verde en caso haya una cámara conectada a la computadora y para hacer la verificación de micrófono tendrá que decir tres palabras diferente ("Dispara, "Fuego" y "Flecha") y saldrán flechas del arco del personaje. En caso el usuario no tenga estos dos dispositivos disponibles, no podrá jugar.
 <p align="center">
-            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana2.png" width= 400>
+            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana2.png" width= 800>
 </p>
 
 Esta es la ventana de menú principal donde presentamos al juego y damos opciones de Jugar (Play), modificar las opciones del juego (Options) o Salir (Exit). El usuario debe hacer click en la opción Play.
