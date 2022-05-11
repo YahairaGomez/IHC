@@ -5,6 +5,7 @@ Para mover la flecha que apunta al ave se hará uso de reconocimiento de gestos 
 
 <p align="center">
   <img /> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png" width= 400>
+  
   <img /> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos2.png" width= 400>
 </p>
 
