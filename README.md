@@ -38,12 +38,12 @@ Esta ventana verifica si el usuario cumple con los requisitos requeridos (cámar
 
 Esta es la ventana de menú principal donde presentamos al juego y damos opciones de Jugar (Play), modificar las opciones del juego (Options) o Salir (Exit). El usuario debe hacer click en la opción Play.
 <p align="center">
-            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana3.png" width= 400>
+            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana3.png" width= 800>
 </p>
 
 Por último, se tiene el escenario principal donde el usuario empieza el juego en sí siguiendo las instrucciones dadas anteriormente.
 <p align="center">
-            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana4.png" width= 400>
+            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/ventana4.png" width= 800>
 </p>
 
 A continuación se presenta un video donde se muestra todos los pasos explicados anteriormente
