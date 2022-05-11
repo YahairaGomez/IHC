@@ -4,8 +4,8 @@ Cada vez que la flecha choque con el ave se irá incrementando la cantidad de pu
 Para mover la flecha que apunta al ave se hará uso de reconocimiento de gestos y para disparar las flechas usaremos comandos de voz con palabras específicas.
 
 
-<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png">
-<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos2.png">
+<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png" width= 400>
+<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos2.png" width= 400>
 
 ### Requisitos 🔧
 
