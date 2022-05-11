@@ -3,9 +3,11 @@ El juego contará con dos personajes principales: El arquero y el ave, el objeti
 Cada vez que la flecha choque con el ave se irá incrementando la cantidad de puntos. 
 Para mover la flecha que apunta al ave se hará uso de reconocimiento de gestos y para disparar las flechas usaremos comandos de voz con palabras específicas.
 
+<p align="center">
+  <img /> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png" width= 400>
+  <img /> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos2.png" width= 400>
+</p>
 
-<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png" width= 400>
-<img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos2.png" width= 400>
 
 ### Requisitos 🔧
 
@@ -24,8 +26,10 @@ diga claramente "Dispara" o "Fuego" o "Flecha"
 Para instalar y correr el proyecto descargue la carpeta la carpeta completa y ejecute el programa.
 
 ### Demo 🔧
-
-
+La primera ventana con la que el usuario interactúa es la ventana de instrucciones, en esta se indica brevemente cómo jugar el juego y su objetivo
+<p align="center">
+            <img \> <img src="https://github.com/YahairaGomez/IHC/blob/master/Imagenes_Informe/recGestos1.png" width= 400>
+</p>
 
 ## Autor ✒️
 
