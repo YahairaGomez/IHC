@@ -1,1 +1,11 @@
 __pycache__/
+.vs
+.vscode
+.idea
+.plastic
+Temp
+Library
+UserSettings
+Logs
+obj
+UserSettings

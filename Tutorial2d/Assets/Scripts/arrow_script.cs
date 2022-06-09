@@ -30,7 +30,7 @@ public class arrow_script : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if(col.tag == "Choque" || col.tag == "destroy_arrow")
+        if(col.tag == "Choque" || col.tag == "destroy_arrow" || col.tag == "ShieldCollision")
             Destroy(this.gameObject);
     }
 }

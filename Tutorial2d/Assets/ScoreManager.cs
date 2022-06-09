@@ -22,9 +22,12 @@ public class ScoreManager : MonoBehaviour
         if (collision.tag == "Choque")
         {
             AddPoint();
-            
         }
-        
+        // colisiono con un escudo
+        if (collision.tag == "ShieldCollision")
+        {
+            Destroy(collision.gameObject);
+        }
        
     }
 }
