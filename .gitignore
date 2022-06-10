@@ -1,11 +1,12 @@
 __pycache__/
+Build
 .vs
 .vscode
 .idea
-.plastic
 Temp
 Library
 UserSettings
 Logs
 obj
-UserSettings
+*.csproj
+*.sln

@@ -5,9 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class cambioEscena : MonoBehaviour
 {
-    public string sceneName;
-    public void LoadScene()
+    public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        if (sceneName == "exit")
+        {
+            Debug.Log("saliendo del juego");
+            Application.Quit();
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
     }
 }

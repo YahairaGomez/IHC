@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7508957806881578154}
   - component: {fileID: 7508957806881578155}
   - component: {fileID: 7508957806881578152}
+  - component: {fileID: -6240399922471167385}
   m_Layer: 0
   m_Name: Defensor
   m_TagString: Untagged
@@ -97,6 +98,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionIP: 127.0.0.1
   connectionPort: 25001
-  Shield: {fileID: 1555878949962489970, guid: 8305602ecff057e43a934738ddc6c524, type: 3}
-  maxShields: 2
-  destroyDelay: 0
+  Shield: {fileID: 5702149950890720006, guid: a67a10a58a3be9e41a1b295926202689, type: 3}
+  maxShields: 3
+  destroyDelay: 4
+--- !u!114 &-6240399922471167385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7508957806881578149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
