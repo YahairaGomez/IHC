@@ -24,7 +24,6 @@ parametros = cv2.aruco.DetectorParameters_create()
 diccionario = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
 
 
-
 """
 GUI IMAGES
 """
@@ -41,7 +40,8 @@ COLUMN LAYERS
 col1 = [
     [sg.Text('Instrucciones', size=(15,1), justification='left', font='Helvetica 10')],
     [sg.Button('Calibrador', size=(10, 1), font='Helvetica 14')],
-    [sg.Button('Aruco', size=(10, 1), font='Helvetica 14')],
+    [sg.Button('Aruco Defensor', size=(15, 1), font='Helvetica 14')],
+    [sg.Button('Aruco Atacante', size=(15, 1), font='Helvetica 14')],
     [sg.Button('Salir', size=(10, 1), font='Helvetica 14')],
 ]
 
@@ -83,6 +83,13 @@ def main():
     scr_width, scr_height = pyautogui.size()
     first_time = False
 
+    para_atacante = False
+    para_defensor = False
+
+    # Antes nos conectamos al servidor
+    socket_defensor = UConn.connect_to_server("127.0.0.1", 25001) # puerto para el defensor
+    socket_atacante = UConn.connect_to_server("127.0.0.1", 25005) # puerto para el atacante
+
     while True:
         event, values = window.read(timeout=10)
         if event == 'Salir' or event == sg.WIN_CLOSED:
@@ -91,11 +98,23 @@ def main():
         elif event == "Calibrador":
             aruco_mode = False
             recording_cam = False
+            para_atacante = para_defensor = False
             CalibrationGUI.calibration_window()
 
-        elif event == "Aruco":
+        elif event == "Aruco Defensor":
             aruco_mode = True
             recording_cam = True
+
+            para_defensor = True
+            para_atacante = False
+            window['simple_instruction'].update("Muestra un marcador Aruco de tamaño 5x5.\n"
+                                                "Ya puedes usar el marcador para jugar como defensa")
+        elif event == "Aruco Atacante":
+            aruco_mode = True
+            recording_cam = True
+
+            para_atacante = True
+            para_defensor = False
             window['simple_instruction'].update("Muestra un marcador Aruco de tamaño 5x5.\n"
                                                 "Ya puedes usar el marcador para jugar como defensa")
 
@@ -118,22 +137,19 @@ def main():
             aruco_detected, corners = detectMarkers.paintMarker(frame, diccionario, parametros, matrix, dist)
 
             if len(corners) != 0:
-                center_aruco = list(np.sum(corners, axis=0, dtype=np.int) // 4)
-                center_aruco.append(0)
-                # enviamos el centro de nuestro marcador aruco a Unity
-                UConn.send_position(center_aruco)
+                centers_aruco = []
+                for cor in corners:
+                    center_ar = list(np.sum(cor[0], axis=0, dtype=np.int) // 4)
+                    center_ar.append(0)
+                    # enviamos el centro de nuestro marcador aruco a Unity
+                    centers_aruco.append(center_ar)
+                if para_defensor:
+                    # enviamos el caracter del defensor
+                    UConn.send_positions(socket_defensor, centers_aruco, 'd', False)
+                elif para_atacante: # sino la única pposibilidad es para el atacante
+                    UConn.send_positions(socket_atacante, centers_aruco, 'a', False)
 
-                # m_width = scr_width / frame_width
-                # m_height = scr_height / frame_height
-                #
-                # tr_pos = np.array((m_width * center_aruco[0], m_height * center_aruco[1]))
-                # curr_pos = np.array(mouse.get_position())
-                #
-                # offset = tr_pos - curr_pos
-                #
-                # mouse.move(offset[0], offset[1], absolute=False, duration=0)
-
-            img_bytes = cv2.imencode('.png', aruco_detected)[1].tobytes()  # ditto
+            img_bytes = cv2.imencode('.png', aruco_detected)[1].tobytes()
             window['image'].update(data=img_bytes)
 
     window.close()

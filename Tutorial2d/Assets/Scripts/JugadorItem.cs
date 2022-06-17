@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,13 @@ public class JugadorItem : MonoBehaviourPunCallbacks
     private ExitGames.Client.Photon.Hashtable jugadorPropiedades = new ExitGames.Client.Photon.Hashtable();
     private Player jugador;
     private string[] personajes = { "atacante", "defensor"};
-    
+
+    private void Start()
+    {
+        // creo que sería mejor colocar esto en la función start
+        PhotonNetwork.SetPlayerCustomProperties(jugadorPropiedades);
+    }
+
     public void SetPlayerInfo(Player _jugador)
     {
         nombreJugador.text = _jugador.NickName;
@@ -53,7 +60,7 @@ public class JugadorItem : MonoBehaviourPunCallbacks
                 // y 1:defensor para el cliente visitante 
                 jugadorPropiedades["personaje"] = 1;
             }
-            Debug.Log(personajes[(int)jugadorPropiedades["personaje"]]);
+            // Debug.Log(personajes[(int)jugadorPropiedades["personaje"]]);
         }
         else
         {
@@ -67,9 +74,8 @@ public class JugadorItem : MonoBehaviourPunCallbacks
                 // y 1:defensor para el cliente visitante 
                 jugadorPropiedades.Add("personaje", 1);
             }
-            Debug.Log(personajes[(int)jugadorPropiedades["personaje"]]);
+            // Debug.Log(personajes[(int)jugadorPropiedades["personaje"]]);
         }
         
-        PhotonNetwork.SetPlayerCustomProperties(jugadorPropiedades);
     }
 }

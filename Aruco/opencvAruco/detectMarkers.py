@@ -56,13 +56,13 @@ def paintMarker(frame, diccionario, parametros, matrix, dist):
                 # marker_corners, mrv = rotate_marker_corners(rvec, 50)
                 # print("Marker Corners: ", marker_corners)
 
-                rVecStr = f"RVEC x:{round(rvec[i][0][0], 2)} y:{round(rvec[i][0][1], 2)} z:{round(rvec[i][0][2], 2)}"
-                tVecStr = f"TVEC x:{round(tvec[i][0][0], 2)} y:{round(tvec[i][0][1], 2)} z:{round(tvec[i][0][2], 2)}"
+                #rVecStr = f"RVEC x:{round(rvec[i][0][0], 2)} y:{round(rvec[i][0][1], 2)} z:{round(rvec[i][0][2], 2)}"
+                #tVecStr = f"TVEC x:{round(tvec[i][0][0], 2)} y:{round(tvec[i][0][1], 2)} z:{round(tvec[i][0][2], 2)}"
                 # print(rvec[0][0][0],rvec[0][0][1],rvec[0][0][2])
-                cv2.putText(frame, rVecStr,
-                            (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50, 225, 250), 2)
-                cv2.putText(frame, tVecStr,
-                            (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50, 225, 250), 2)
+                #cv2.putText(frame, rVecStr,
+                #            (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50, 225, 250), 2)
+                #cv2.putText(frame, tVecStr,
+                #            (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50, 225, 250), 2)
 
                 # Eliminamos el error de la matriz de valores numpy
                 (rvec - tvec).any()
@@ -82,14 +82,14 @@ def paintMarker(frame, diccionario, parametros, matrix, dist):
                        esquinas[i][0][2][1] + esquinas[i][0][3][1]) / 4
 
                 # Mostramos el ID
-                # cv2.putText(frame, 'ID' + str(ids[i]), (int(c_x), int(c_y)),
-                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50,225,250), 2)
+                cv2.putText(frame, 'ID' + str(ids[i]), (int(c_x), int(c_y)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50,225,250), 2)
 
                 # Extraemos los puntos de las esquinas en coordenadas separadas
-                c1 = (esquinas[0][0][0][0], esquinas[0][0][0][1])
-                c2 = (esquinas[0][0][1][0], esquinas[0][0][1][1])
-                c3 = (esquinas[0][0][2][0], esquinas[0][0][2][1])
-                c4 = (esquinas[0][0][3][0], esquinas[0][0][3][1])
+                c1 = (esquinas[i][0][0][0], esquinas[i][0][0][1])
+                c2 = (esquinas[i][0][1][0], esquinas[i][0][1][1])
+                c3 = (esquinas[i][0][2][0], esquinas[i][0][2][1])
+                c4 = (esquinas[i][0][3][0], esquinas[i][0][3][1])
                 v1, v2 = c1[0], c1[1]
                 v3, v4 = c2[0], c2[1]
                 v5, v6 = c3[0], c3[1]
@@ -121,5 +121,5 @@ def paintMarker(frame, diccionario, parametros, matrix, dist):
     # frame = cv2.flip(frame, 1)
 
     if esquinas != ():
-        return frame, esquinas[0][0]
+        return frame, esquinas
     return frame, ()

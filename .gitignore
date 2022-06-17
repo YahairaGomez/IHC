@@ -3,6 +3,7 @@ Build
 .vs
 .vscode
 .idea
+.plastic
 Temp
 Library
 UserSettings
@@ -10,3 +11,4 @@ Logs
 obj
 *.csproj
 *.sln
+*.conf
