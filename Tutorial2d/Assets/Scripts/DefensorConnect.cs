@@ -9,7 +9,7 @@ using UnityEngine;
 using System.Threading;
 using UnityEngine.Windows.Speech;
 using Photon.Pun;
-    
+
 
 public class DefensorConnect : MonoBehaviour
 {
@@ -19,70 +19,79 @@ public class DefensorConnect : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    
+
     Vector3 receivedPos;
-    float vertExtentProjection;  
+    float vertExtentProjection;
     float horzExtentProjection;
     private float horzExtentAruco = 640.0f; // horizontal width of aruco marker
     private float vertExtentAruco = 480.0f; // vertical height of aruco marker
     private float pendiente_W;
     private float pendiente_H;
-    
+
     bool running;
 
     private KeywordRecognizer keywordRecognizer;
     private List<string> actions = new List<string>();
     public GameObject Shield;
     private int currShields = 0; // cantidad actual de escudos en el juego
-    [Range(0, 5)]
-    public int maxShields = 3; // la máxima cantidad de escudos posibles en el juego
-    [Range(2, 5)] 
+    [Range(0, 5)] public int maxShields = 3; // la máxima cantidad de escudos posibles en el juego
+
+    [Range(2, 5)]
     public float destroyDelay = 3; // el tiempo en segundos que demoran en destruirse los escudos por defecto 3s
-    
+
     private void Update()
     {
-        Vector3 currPos = new Vector3(pendiente_W * receivedPos.x - horzExtentProjection, 
-            pendiente_H * receivedPos.y - vertExtentProjection, 0);
-        transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+        // solo si el jugador tiene asignado el defensor se puede mover
+        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 1)
+        {
+            Vector3 currPos = new Vector3(pendiente_W * receivedPos.x - horzExtentProjection,
+                pendiente_H * receivedPos.y - vertExtentProjection, 0);
+            transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+        }
     }
 
     private void Start()
     {
-        receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
-            
-        ThreadStart ts = new ThreadStart(GetInfo);
-        mThread = new Thread(ts);
-        mThread.Start();
+        // solo nos conectamos con python si nuestro personaje es el defensor
+        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 1)
+        {
+            receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
 
-        vertExtentProjection = Camera.main.orthographicSize;
-        horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
-        pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
-        pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
-        
-        // Debug.Log("horzExtent: " + horzExtentProjection);
-        // Debug.Log("vertExtent: " + vertExtentProjection);
-        //
-        // Debug.Log("screen width: " + Screen.width);
-        // Debug.Log("screen height: " + Screen.height);
-        
-        // Estas son las tres palabras que podemos decir para poner un escudo
-        actions.Add("escudo");
-        actions.Add("defensa");
-        actions.Add("barrera");
+            ThreadStart ts = new ThreadStart(GetInfo);
+            mThread = new Thread(ts);
+            mThread.Start();
 
-        keywordRecognizer = new KeywordRecognizer(actions.ToArray());
-        keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
-        keywordRecognizer.Start();
+            vertExtentProjection = Camera.main.orthographicSize;
+            horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
+            pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
+            pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
+
+            // Debug.Log("horzExtent: " + horzExtentProjection);
+            // Debug.Log("vertExtent: " + vertExtentProjection);
+            //
+            // Debug.Log("screen width: " + Screen.width);
+            // Debug.Log("screen height: " + Screen.height);
+
+            // Estas son las tres palabras que podemos decir para poner un escudo
+            actions.Add("escudo");
+            actions.Add("defensa");
+            actions.Add("barrera");
+
+            keywordRecognizer = new KeywordRecognizer(actions.ToArray());
+            keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
+            keywordRecognizer.Start();
+        }
     }
+
     private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
-        Debug.Log("Keyword: "+ speech.text);
+        Debug.Log("Keyword: " + speech.text);
         if (currShields < maxShields)
         {
             StartCoroutine(generateBarrier());
         }
     }
-    
+
     IEnumerator generateBarrier()
     {
         //GameObject ShieldIns = Instantiate(Shield, transform.position, transform.rotation);
@@ -94,7 +103,7 @@ public class DefensorConnect : MonoBehaviour
         PhotonNetwork.Destroy(ShieldIns);
         currShields--; // decrementamos los escudos en el juego una vez destruido
     }
-    
+
     void GetInfo()
     {
         localAdd = IPAddress.Parse(connectionIP);
@@ -108,6 +117,7 @@ public class DefensorConnect : MonoBehaviour
         {
             SendAndReceiveData();
         }
+
         listener.Stop();
     }
 
@@ -127,7 +137,9 @@ public class DefensorConnect : MonoBehaviour
             print("received pos data, and placed the shield!");
 
             //---Sending Data to Host----
-            byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this message?"); //Converting string to byte data
+            byte[] myWriteBuffer =
+                Encoding.ASCII.GetBytes(
+                    "Hey I got your message Python! Do You see this message?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
         }
     }
@@ -142,7 +154,7 @@ public class DefensorConnect : MonoBehaviour
 
         // split the items
         string[] sArray = sVector.Split(',');
-        
+
         // Aquí solo se recibe un vector para el defensor
         // store as a Vector3
         Vector3 result = new Vector3();
@@ -159,9 +171,9 @@ public class DefensorConnect : MonoBehaviour
             {
                 Console.WriteLine(e);
             }
-            
         }
-        print("result:"+result);
+
+        print("result:" + result);
         return result;
     }
     /*
