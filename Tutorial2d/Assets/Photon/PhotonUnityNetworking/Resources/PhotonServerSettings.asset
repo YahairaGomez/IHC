@@ -40,6 +40,10 @@ MonoBehaviour:
   - OnSelectDefensor
   - disableSelection
   - OnSelected
+  - AddPoint
+  - AddBarrierCollision
+  - AddBarrierDefensor
+  - AddDisparoAtacante
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

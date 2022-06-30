@@ -70,7 +70,7 @@ def main():
     ]
 
     # create the window and show it without the plot
-    window = sg.Window('Demo marcadores Aruco',
+    window = sg.Window('Controlador de personajes',
                        layout, location=(500, 400))
 
     # ---===--- Event LOOP Read and display frames, operate the GUI --- #

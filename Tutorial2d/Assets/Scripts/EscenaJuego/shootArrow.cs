@@ -46,7 +46,7 @@ public class shootArrow : MonoBehaviour
     void Update()
     {
         // solo el master puede disparar una flecha
-        if (Input.GetKeyUp("space") && PhotonNetwork.IsMasterClient)
+        if (Input.GetKeyUp("space") && (int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
         {
             shoot();
         }
@@ -59,9 +59,13 @@ public class shootArrow : MonoBehaviour
         // GameObject ArrowIns = Instantiate(Arrow, transform.position, transform.rotation);
         // instanciando con photon
         GameObject ArrowIns = PhotonNetwork.Instantiate(Arrow.name, transform.position, transform.rotation);
-
-        ArrowIns.GetComponent<ScoreManager>().MyscoreText = myScoreText;
+        ScoreManager scoreManager = ArrowIns.GetComponent<ScoreManager>();
+        scoreManager.MyscoreText = myScoreText;
         ArrowIns.GetComponent<Rigidbody2D>().AddForce(transform.right * LaunchForce);
-        
+        // aumentamos los disparos del atacante
+        if (scoreManager.GetComponent<PhotonView>().IsMine)
+        {
+            scoreManager.GetComponent<PhotonView>().RPC("AddDisparoAtacante", RpcTarget.AllBuffered);
+        }
     }
 }

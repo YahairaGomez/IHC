@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7508957806881578152}
   - component: {fileID: -6240399922471167385}
   - component: {fileID: 666443008100959918}
+  - component: {fileID: 6950226231363107066}
   m_Layer: 0
   m_Name: Defensor
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7508957806881578149}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.75, y: 1.2099999, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -98,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectionIP: 127.0.0.1
-  connectionPort: 25005
+  connectionPort: 25001
   Shield: {fileID: 5702149950890720006, guid: a67a10a58a3be9e41a1b295926202689, type: 3}
   maxShields: 3
   destroyDelay: 4
@@ -158,3 +159,18 @@ MonoBehaviour:
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
+--- !u!114 &6950226231363107066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7508957806881578149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e954a0be25222845ae0a8c42a508d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MyscoreText: {fileID: 0}
+  scoreAtacante: 0
+  controlador_del_sistema: {fileID: 0}

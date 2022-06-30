@@ -53,39 +53,35 @@ public class AtacanteConnect : MonoBehaviour
 
     private void Start()
     {
-        // solo el atacante puede conectarse a python
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
-        {
-            receivedRot = new Vector3(horzExtentAruco / 2, 0, 0); // llano al inicio
-            receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
+        receivedRot = new Vector3(horzExtentAruco / 2, 0, 0); // llano al inicio
+        receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
 
-            ThreadStart ts = new ThreadStart(GetInfo);
-            mThread = new Thread(ts);
-            mThread.Start();
+        ThreadStart ts = new ThreadStart(GetInfo);
+        mThread = new Thread(ts);
+        mThread.Start();
 
-            // los límites para los marcadores Aruco
-            ArX = new Vector2(0.0f, horzExtentAruco);
-            ArY = new Vector2(0.0f, vertExtentAruco);
-            // los límites para el espacio de MOVIMIENTO en unity
-            UnPosX = new Vector2(-11.52f, -6.26f);
-            UnPosY = new Vector2(-2.61f, 3.08f);
+        // los límites para los marcadores Aruco
+        ArX = new Vector2(0.0f, horzExtentAruco);
+        ArY = new Vector2(0.0f, vertExtentAruco);
+        // los límites para el espacio de MOVIMIENTO en unity
+        UnPosX = new Vector2(-11.52f, -6.26f);
+        UnPosY = new Vector2(-2.61f, 3.08f);
 
-            // obteniendo las pendientes de la relación lineal MOVIMIENTO
-            mPos_W = (UnPosX.y - UnPosX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
-            mPos_H = (UnPosY.y - UnPosY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
+        // obteniendo las pendientes de la relación lineal MOVIMIENTO
+        mPos_W = (UnPosX.y - UnPosX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
+        mPos_H = (UnPosY.y - UnPosY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
 
-            // obteniendo las pendientes de la relación lineal ROTACION
-            mRot_W = (UnRotX.y - UnRotX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
-            mRot_H = (UnRotY.y - UnRotY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
+        // obteniendo las pendientes de la relación lineal ROTACION
+        mRot_W = (UnRotX.y - UnRotX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
+        mRot_H = (UnRotY.y - UnRotY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
 
-            // obteniendo las constantes de las relaciones lineales MOVIMIENTO
-            bPos_W = UnPosX.y - mPos_W * ArX.y; // horizontal
-            bPos_H = UnPosY.y - mPos_H * ArY.y; // vertical
+        // obteniendo las constantes de las relaciones lineales MOVIMIENTO
+        bPos_W = UnPosX.y - mPos_W * ArX.y; // horizontal
+        bPos_H = UnPosY.y - mPos_H * ArY.y; // vertical
 
-            // obteniendo las constantes de las relaciones lineales ROTACIÓN
-            bRot_W = UnRotX.y - mRot_W * ArX.y; // horizontal
-            bRot_H = UnRotY.y - mRot_H * ArY.y; // vertical
-        }
+        // obteniendo las constantes de las relaciones lineales ROTACIÓN
+        bRot_W = UnRotX.y - mRot_W * ArX.y; // horizontal
+        bRot_H = UnRotY.y - mRot_H * ArY.y; // vertical
     }
 
 

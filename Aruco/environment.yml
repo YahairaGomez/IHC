@@ -8,7 +8,6 @@ dependencies:
   - spyder
   - pysimplegui
   - pillow
-  - speechrecognition
   - pyaudio
   - deepspeech
   - webrtcvad

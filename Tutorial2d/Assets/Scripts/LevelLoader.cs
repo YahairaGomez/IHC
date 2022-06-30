@@ -7,12 +7,12 @@ public class LevelLoader : MonoBehaviour
 {
     public Animator transition;
     public float transitionTime = 1f;
-    //Cambia de escena cuando presiono el botón
+    //Cambia de escena cuando presiono el boton
 
 
     void Start()
     {
-        PlayerPrefs.SetInt("player_score", 0);
+        PlayerPrefs.SetInt("puntaje_atacante", 0);
     }
 
     void Update()
@@ -23,8 +23,8 @@ public class LevelLoader : MonoBehaviour
         }
     }
 
-    //En vez de poner qué escena quiero cargar, carga la escena en la que estoy y añade +1 para ir a la sgte,
-    // Esta func hará que la scene cargue rápido, y no se verá la animation, entonces creamos corutina
+    //En vez de poner quï¿½ escena quiero cargar, carga la escena en la que estoy y aï¿½ade +1 para ir a la sgte,
+    // Esta func harï¿½ que la scene cargue rï¿½pido, y no se verï¿½ la animation, entonces creamos corutina
     public void LoadNextLevel()
     {
         if(SceneManager.GetActiveScene().buildIndex + 1 < 4)

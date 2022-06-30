@@ -213,6 +213,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6240399922471167385, guid: e4372c4012cf7814f9c9f5ef2bbe242b, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7508957806881578149, guid: e4372c4012cf7814f9c9f5ef2bbe242b, type: 3}
       propertyPath: m_Name
       value: Defensor

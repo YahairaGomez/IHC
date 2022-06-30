@@ -47,45 +47,46 @@ public class DefensorConnect : MonoBehaviour
             Vector3 currPos = new Vector3(pendiente_W * receivedPos.x - horzExtentProjection,
                 pendiente_H * receivedPos.y - vertExtentProjection, 0);
             transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+            
+            // con la tecla espacio también puede poner un escudo
+            if (Input.GetKeyUp("space") && currShields < maxShields)
+            {
+                StartCoroutine(generateBarrier());
+            }
         }
     }
 
     private void Start()
     {
-        // solo nos conectamos con python si nuestro personaje es el defensor
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 1)
-        {
-            receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
+        receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
 
-            ThreadStart ts = new ThreadStart(GetInfo);
-            mThread = new Thread(ts);
-            mThread.Start();
+        ThreadStart ts = new ThreadStart(GetInfo);
+        mThread = new Thread(ts);
+        mThread.Start();
 
-            vertExtentProjection = Camera.main.orthographicSize;
-            horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
-            pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
-            pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
+        vertExtentProjection = Camera.main.orthographicSize;
+        horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
+        pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
+        pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
 
-            // Debug.Log("horzExtent: " + horzExtentProjection);
-            // Debug.Log("vertExtent: " + vertExtentProjection);
-            //
-            // Debug.Log("screen width: " + Screen.width);
-            // Debug.Log("screen height: " + Screen.height);
+        // Debug.Log("horzExtent: " + horzExtentProjection);
+        // Debug.Log("vertExtent: " + vertExtentProjection);
+        //
+        // Debug.Log("screen width: " + Screen.width);
+        // Debug.Log("screen height: " + Screen.height);
 
-            // Estas son las tres palabras que podemos decir para poner un escudo
-            actions.Add("escudo");
-            actions.Add("defensa");
-            actions.Add("barrera");
+        // Estas son las tres palabras que podemos decir para poner un escudo
+        actions.Add("escudo");
+        actions.Add("defensa");
+        actions.Add("barrera");
 
-            keywordRecognizer = new KeywordRecognizer(actions.ToArray());
-            keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
-            keywordRecognizer.Start();
-        }
+        keywordRecognizer = new KeywordRecognizer(actions.ToArray());
+        keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
+        keywordRecognizer.Start();
     }
 
     private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
-        Debug.Log("Keyword: " + speech.text);
         if (currShields < maxShields)
         {
             StartCoroutine(generateBarrier());
@@ -97,8 +98,16 @@ public class DefensorConnect : MonoBehaviour
         //GameObject ShieldIns = Instantiate(Shield, transform.position, transform.rotation);
         GameObject ShieldIns = PhotonNetwork.Instantiate(Shield.name, transform.position, Quaternion.identity);
         currShields++; // aumentamos la cantidad de escudos en el juego
+
+        // actualizamos las barreras colocadas por el defensor
+        ScoreManager myScoreManager = GetComponent<ScoreManager>();
+        if (myScoreManager.GetComponent<PhotonView>().IsMine)
+        {
+            myScoreManager.GetComponent<PhotonView>().RPC("AddBarrierDefensor", RpcTarget.AllBuffered);
+        }
+
         Debug.Log("Current shields: " + currShields);
-        // esperar 3 segundos antes de destruir un objeto
+        // esperar destroyDelay segundos antes de destruir un objeto
         yield return new WaitForSeconds(destroyDelay);
         PhotonNetwork.Destroy(ShieldIns);
         currShields--; // decrementamos los escudos en el juego una vez destruido
@@ -134,7 +143,6 @@ public class DefensorConnect : MonoBehaviour
         {
             //---Using received data---
             receivedPos = StringToVectors3(dataReceived); //<-- assigning receivedPos value from Python
-            print("received pos data, and placed the shield!");
 
             //---Sending Data to Host----
             byte[] myWriteBuffer =
@@ -173,7 +181,7 @@ public class DefensorConnect : MonoBehaviour
             }
         }
 
-        print("result:" + result);
+        
         return result;
     }
     /*
