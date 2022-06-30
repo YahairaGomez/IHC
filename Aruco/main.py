@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import asyncio
-import threading
 import PySimpleGUI as sg
 import cv2
 import numpy as np
@@ -9,6 +7,7 @@ import pyautogui
 import CalibrationGUI
 import UnityConnect as UConn
 from opencvAruco import detectMarkers
+import HandTrackingModule as htm
 
 """
 ARUCO CONDIFUGRATIONS
@@ -87,8 +86,12 @@ def main():
     para_defensor = False
 
     # Antes nos conectamos al servidor
-    socket_defensor = UConn.connect_to_server("127.0.0.1", 25001) # puerto para el defensor
-    socket_atacante = UConn.connect_to_server("127.0.0.1", 25005) # puerto para el atacante
+    socket_defensor = 0
+    socket_atacante = 0
+    server_mode = True
+    if server_mode:
+        socket_defensor = UConn.connect_to_server("127.0.0.1", 25001) # puerto para el defensor
+        socket_atacante = UConn.connect_to_server("127.0.0.1", 25005) # puerto para el atacante
 
     while True:
         event, values = window.read(timeout=10)
@@ -143,11 +146,13 @@ def main():
                     center_ar.append(0)
                     # enviamos el centro de nuestro marcador aruco a Unity
                     centers_aruco.append(center_ar)
-                if para_defensor:
-                    # enviamos el caracter del defensor
-                    UConn.send_positions(socket_defensor, centers_aruco, 'd', False)
-                elif para_atacante: # sino la única pposibilidad es para el atacante
-                    UConn.send_positions(socket_atacante, centers_aruco, 'a', False)
+
+                if server_mode:
+                    if para_defensor:
+                        # enviamos el caracter del defensor
+                        UConn.send_positions(socket_defensor, centers_aruco, 'd', False)
+                    elif para_atacante: # sino la única pposibilidad es para el atacante
+                        UConn.send_positions(socket_atacante, centers_aruco, 'a', False)
 
             img_bytes = cv2.imencode('.png', aruco_detected)[1].tobytes()
             window['image'].update(data=img_bytes)

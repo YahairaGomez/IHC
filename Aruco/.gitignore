@@ -5,8 +5,6 @@ imgs/calibration/calib_3.jpg
 imgs/calibration/calib_4.jpg
 imgs/calibration/calib_5.jpg
 
-CamSettings/dist.txt
-CamSettings/matrix.txt
 
 __pycache__/
 .*

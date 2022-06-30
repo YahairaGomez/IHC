@@ -81,7 +81,7 @@ def paintMarker(frame, diccionario, parametros, matrix, dist):
                 c_y = (esquinas[i][0][0][1] + esquinas[i][0][1][1] +
                        esquinas[i][0][2][1] + esquinas[i][0][3][1]) / 4
 
-                # Mostramos el ID
+                # Mostramos el ID del marcador
                 cv2.putText(frame, 'ID' + str(ids[i]), (int(c_x), int(c_y)),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50,225,250), 2)
 
