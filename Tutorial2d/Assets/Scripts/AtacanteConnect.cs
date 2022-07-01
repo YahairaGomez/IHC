@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading;
 using Photon.Pun;
 using UnityEngine.Windows.Speech;
+using UnityEngine.SceneManagement;
+
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -37,51 +39,65 @@ public class AtacanteConnect : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private List<string> actions = new List<string>();
    
+    // solo se usara photon en la escena del juego
+    string sceneName;
+
+    private void Awake()
+    {
+        sceneName = SceneManager.GetActiveScene().name;
+    }
+
     private void Update()
     {
-        // solo el atacante puede actualizar el vector de posición
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+        if (sceneName == "Nivel1")
         {
-            Vector3 currPos = new Vector3(mPos_W * receivedPos.x + bPos_W, 
-                mPos_H * receivedPos.y + bPos_H, 0);
-            transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+            // solo el atacante puede actualizar el vector de posición
+            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+            {
+                Vector3 currPos = new Vector3(mPos_W * receivedPos.x + bPos_W, 
+                    mPos_H * receivedPos.y + bPos_H, 0);
+                transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
         
-            receivedRot = new Vector3(mRot_W * receivedRot.x + bRot_W, 
-                mRot_H * receivedRot.y + bRot_H, 0);            
+                receivedRot = new Vector3(mRot_W * receivedRot.x + bRot_W, 
+                    mRot_H * receivedRot.y + bRot_H, 0);            
+            }            
         }
     }
 
     private void Start()
     {
-        receivedRot = new Vector3(horzExtentAruco / 2, 0, 0); // llano al inicio
-        receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
+        if (sceneName == "Nivel1")
+        {
+            receivedRot = new Vector3(horzExtentAruco / 2, 0, 0); // llano al inicio
+            receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
 
-        ThreadStart ts = new ThreadStart(GetInfo);
-        mThread = new Thread(ts);
-        mThread.Start();
+            ThreadStart ts = new ThreadStart(GetInfo);
+            mThread = new Thread(ts);
+            mThread.Start();
 
-        // los límites para los marcadores Aruco
-        ArX = new Vector2(0.0f, horzExtentAruco);
-        ArY = new Vector2(0.0f, vertExtentAruco);
-        // los límites para el espacio de MOVIMIENTO en unity
-        UnPosX = new Vector2(-11.52f, -6.26f);
-        UnPosY = new Vector2(-2.61f, 3.08f);
+            // los límites para los marcadores Aruco
+            ArX = new Vector2(0.0f, horzExtentAruco);
+            ArY = new Vector2(0.0f, vertExtentAruco);
+            // los límites para el espacio de MOVIMIENTO en unity
+            UnPosX = new Vector2(-11.52f, -6.26f);
+            UnPosY = new Vector2(-2.61f, 3.08f);
 
-        // obteniendo las pendientes de la relación lineal MOVIMIENTO
-        mPos_W = (UnPosX.y - UnPosX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
-        mPos_H = (UnPosY.y - UnPosY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
+            // obteniendo las pendientes de la relación lineal MOVIMIENTO
+            mPos_W = (UnPosX.y - UnPosX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
+            mPos_H = (UnPosY.y - UnPosY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
 
-        // obteniendo las pendientes de la relación lineal ROTACION
-        mRot_W = (UnRotX.y - UnRotX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
-        mRot_H = (UnRotY.y - UnRotY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
+            // obteniendo las pendientes de la relación lineal ROTACION
+            mRot_W = (UnRotX.y - UnRotX.x) / (ArX.y - ArX.x); // pendiente para las coordenadas horizontales
+            mRot_H = (UnRotY.y - UnRotY.x) / (ArY.y - ArY.x); // pendiente para las coordenadas verticales
 
-        // obteniendo las constantes de las relaciones lineales MOVIMIENTO
-        bPos_W = UnPosX.y - mPos_W * ArX.y; // horizontal
-        bPos_H = UnPosY.y - mPos_H * ArY.y; // vertical
+            // obteniendo las constantes de las relaciones lineales MOVIMIENTO
+            bPos_W = UnPosX.y - mPos_W * ArX.y; // horizontal
+            bPos_H = UnPosY.y - mPos_H * ArY.y; // vertical
 
-        // obteniendo las constantes de las relaciones lineales ROTACIÓN
-        bRot_W = UnRotX.y - mRot_W * ArX.y; // horizontal
-        bRot_H = UnRotY.y - mRot_H * ArY.y; // vertical
+            // obteniendo las constantes de las relaciones lineales ROTACIÓN
+            bRot_W = UnRotX.y - mRot_W * ArX.y; // horizontal
+            bRot_H = UnRotY.y - mRot_H * ArY.y; // vertical            
+        }
     }
 
 
@@ -109,7 +125,6 @@ public class AtacanteConnect : MonoBehaviour
         //---receiving Data from the Host----
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize); //Getting data in Bytes from Python
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead); //Converting byte data to string
-
         
         if (dataReceived != null)
         {

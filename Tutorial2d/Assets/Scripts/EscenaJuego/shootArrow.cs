@@ -6,6 +6,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
+using UnityEngine.SceneManagement;
 
 public class shootArrow : MonoBehaviour
 {
@@ -16,6 +17,13 @@ public class shootArrow : MonoBehaviour
     public GameObject Arrow;
     public Text myScoreText;
 
+    // solo se usara photon en la escena del juego
+    string sceneName;
+
+    private void Awake()
+    {
+        sceneName = SceneManager.GetActiveScene().name;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +45,14 @@ public class shootArrow : MonoBehaviour
         // {
         //     personaje: [0,1]
         // }
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+        if (sceneName == "Nivel1")
+        {
+            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+            {
+                actions[speech.text].Invoke();
+            }            
+        }
+        else
         {
             actions[speech.text].Invoke();
         }
@@ -46,26 +61,44 @@ public class shootArrow : MonoBehaviour
     void Update()
     {
         // solo el master puede disparar una flecha
-        if (Input.GetKeyUp("space") && (int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+        if (Input.GetKeyUp("space"))
         {
-            shoot();
+            if (sceneName == "Nivel1")
+            {
+                if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+                {
+                    shoot();
+                }                
+            }
+            else
+            {
+                shoot();
+            }
         }
-        
     }
 
 
     void shoot()
     {
-        // GameObject ArrowIns = Instantiate(Arrow, transform.position, transform.rotation);
         // instanciando con photon
-        GameObject ArrowIns = PhotonNetwork.Instantiate(Arrow.name, transform.position, transform.rotation);
-        ScoreManager scoreManager = ArrowIns.GetComponent<ScoreManager>();
-        scoreManager.MyscoreText = myScoreText;
-        ArrowIns.GetComponent<Rigidbody2D>().AddForce(transform.right * LaunchForce);
-        // aumentamos los disparos del atacante
-        if (scoreManager.GetComponent<PhotonView>().IsMine)
+        
+        if (sceneName == "Nivel1")
         {
-            scoreManager.GetComponent<PhotonView>().RPC("AddDisparoAtacante", RpcTarget.AllBuffered);
+            GameObject ArrowIns = PhotonNetwork.Instantiate(Arrow.name, transform.position, transform.rotation);
+            ArrowIns.GetComponent<Rigidbody2D>().AddForce(transform.right * LaunchForce);
+
+            ScoreManager scoreManager = ArrowIns.GetComponent<ScoreManager>();
+            scoreManager.MyscoreText = myScoreText;
+            // aumentamos los disparos del atacante
+            if (scoreManager.GetComponent<PhotonView>().IsMine)
+            {
+                scoreManager.GetComponent<PhotonView>().RPC("AddDisparoAtacante", RpcTarget.AllBuffered);
+            }            
+        }
+        else
+        {
+            GameObject ArrowIns = Instantiate(Arrow, transform.position, transform.rotation);
+            ArrowIns.GetComponent<Rigidbody2D>().AddForce(transform.right * LaunchForce);
         }
     }
 }

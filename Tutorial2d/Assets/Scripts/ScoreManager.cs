@@ -4,24 +4,34 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    
     public Text MyscoreText;
     public int scoreAtacante;
     public SystemController controlador_del_sistema;
+    
+    // solo se usara photon en la escena del juego
+    string sceneName;
 
     private void Awake()
     {
-        controlador_del_sistema = GameObject.Find("SystemController").GetComponent<SystemController>();
+        sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == "Nivel1")
+        {
+            controlador_del_sistema = GameObject.Find("SystemController").GetComponent<SystemController>();
+        }
     }
     
     private void Start()
     {
         scoreAtacante = 0;
-        MyscoreText = GameObject.Find("Score").GetComponent<Text>();
+        if (sceneName == "Nivel1")
+        {
+            MyscoreText = GameObject.Find("Score").GetComponent<Text>();
+        }
     }
     
 
@@ -85,7 +95,5 @@ public class ScoreManager : MonoBehaviour
     //         // Destroy(collision.gameObject);
     //         PhotonNetwork.Destroy(gameObject);
     //     }
-    //
-    //    
     // }
 }

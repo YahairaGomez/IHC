@@ -20,7 +20,6 @@ public class CameraVerif : MonoBehaviour
     void Start()
     {
         DevConnected();
-
     }
 
 }  

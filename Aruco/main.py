@@ -8,6 +8,7 @@ import CalibrationGUI
 import UnityConnect as UConn
 from opencvAruco import detectMarkers
 import HandTrackingModule as htm
+import mouse
 
 """
 ARUCO CONDIFUGRATIONS
@@ -79,9 +80,6 @@ def main():
     recording_cam = False
 
 
-    scr_width, scr_height = pyautogui.size()
-    first_time = False
-
     para_atacante = False
     para_defensor = False
 
@@ -92,6 +90,16 @@ def main():
     if server_mode:
         socket_defensor = UConn.connect_to_server("127.0.0.1", 25001) # puerto para el defensor
         socket_atacante = UConn.connect_to_server("127.0.0.1", 25005) # puerto para el atacante
+
+    ## El Detector de Manos ##
+    detector = htm.handDetector(maxHands=1)
+    frameR = 100  # Frame Reduction
+    smoothening = 7
+    plocX, plocY = 0, 0
+    clocX, clocY = 0, 0
+    wScr, hScr = sg.Window.get_screen_size()
+    print(wScr, hScr)
+    ##########################
 
     while True:
         event, values = window.read(timeout=10)
@@ -133,9 +141,42 @@ def main():
 
         if recording_cam:
             ret, frame = cap.read()
-
             frame_width = frame.shape[1]
             frame_height = frame.shape[0]
+
+            ##################### HANDS DETECTOR #######################
+            if para_atacante:
+                frame = detector.findHands(frame)
+                lmList, bbox = detector.findPosition(frame)
+                # 2. Get the tip of the index and middle fingers
+                if len(lmList) != 0:
+                    x1, y1 = lmList[8][1:]
+                    x2, y2 = lmList[12][1:]
+                    # print(x1, y1, x2, y2)
+
+                # 3. Check which fingers are up
+                fingers = detector.fingersUp()
+                # print(fingers)
+                cv2.rectangle(frame, (frameR, frameR), (frame_width - frameR, frame_height - frameR),
+                              (255, 0, 255), 2)
+
+                if len(fingers) > 0:
+                    # 4. Only Index Finger : Moving Mode
+                    if fingers[1] == 1 and fingers[2] == 0:
+                        # 5. Convert Coordinates
+                        x3 = np.interp(x1, (frameR, frame_width - frameR), (0, wScr))
+                        y3 = np.interp(y1, (frameR, frame_height - frameR), (0, hScr))
+                        # 6. Smoothen Values
+                        clocX = plocX + (x3 - plocX) / smoothening
+                        clocY = plocY + (y3 - plocY) / smoothening
+
+                        # 7. Move Mouse
+                        mouse.move(wScr - clocX, clocY, absolute=True, duration=0)
+                        cv2.circle(frame, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
+                        plocX, plocY = clocX, clocY
+                ##################### HANDS DETECTOR #######################
+
+
 
             aruco_detected, corners = detectMarkers.paintMarker(frame, diccionario, parametros, matrix, dist)
 

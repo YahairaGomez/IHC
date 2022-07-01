@@ -21,14 +21,15 @@ public class timer : MonoBehaviour
 
     private void Update()
     {
-        // solo cuando el usuario presiona la tecla "e" se inicia el juego
-        if (Input.GetKeyUp("e"))
+        // solo cuando el usuario presiona la tecla "e" y es el atacante(roomhost) se inicia el juego
+        if (Input.GetKeyUp("e") && 
+            (int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
         {
             panel.SetActive(false);
             textRecordatorio.SetActive(false);
             currentTime = duration;
             timeText.text = "00:0"+ currentTime.ToString();
-            StartCoroutine(TimeIEn());            
+            StartCoroutine(TimeIEn());
         }
     }
 

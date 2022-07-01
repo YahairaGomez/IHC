@@ -2,11 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class arrow_script : MonoBehaviour
 {
     Rigidbody2D rb;
     bool hasHit = false;
+    
+    // solo se usara photon en la escena del juego
+    string sceneName;
+
+    private void Awake()
+    {
+        sceneName = SceneManager.GetActiveScene().name;
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -16,11 +26,18 @@ public class arrow_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // solo el atacante puede trackear el movimiento
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+        if (sceneName == "Nivel1")
+        {
+            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+            {
+                trackMovement();
+            }           
+        }
+        else // igualmente trackeamos el movimiento
         {
             trackMovement();
         }
+ 
     }
 
     void trackMovement()
@@ -33,39 +50,39 @@ public class arrow_script : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        
-        Debug.Log(collision.tag);
-        if (collision.tag == "Choque")
-        {
-            // se tocó un ave
-            GameObject MyScoreManager = GetComponent<ScoreManager>().gameObject;
+        if (sceneName == "Nivel1"){
+            if (collision.tag == "Choque")
+            {
+                // se tocó un ave
+                GameObject MyScoreManager = GetComponent<ScoreManager>().gameObject;
 
-            if (MyScoreManager.GetComponent<PhotonView>().IsMine)
-            {
-                print("pajarito herido");
-                MyScoreManager.GetComponent<PhotonView>().RPC("AddPoint", RpcTarget.AllBuffered);
-            }
+                if (MyScoreManager.GetComponent<PhotonView>().IsMine)
+                {
+                    print("pajarito herido");
+                    MyScoreManager.GetComponent<PhotonView>().RPC("AddPoint", RpcTarget.AllBuffered);
+                }
             
-            PhotonNetwork.Destroy(gameObject);
-            //AddPoint();
-        }
-        // colisiono con un escudo
-        if (collision.tag == "ShieldCollision")
-        {
-            // Destroy(collision.gameObject);
-            // se tocó una barrera
-            GameObject MyScoreManager = GetComponent<ScoreManager>().gameObject;
-            if (MyScoreManager.GetComponent<PhotonView>().IsMine)
-            {
-                MyScoreManager.GetComponent<PhotonView>().RPC("AddBarrierCollision", RpcTarget.AllBuffered);
+                PhotonNetwork.Destroy(gameObject);
+                //AddPoint();
             }
-            PhotonNetwork.Destroy(gameObject);
-        }
-        // colisiono con el borde del mapa
-        if (collision.tag == "destroy_arrow")
-        {
-            // Destroy(collision.gameObject);
-            PhotonNetwork.Destroy(gameObject);
+            // colisiono con un escudo
+            if (collision.tag == "ShieldCollision")
+            {
+                // Destroy(collision.gameObject);
+                // se tocó una barrera
+                GameObject MyScoreManager = GetComponent<ScoreManager>().gameObject;
+                if (MyScoreManager.GetComponent<PhotonView>().IsMine)
+                {
+                    MyScoreManager.GetComponent<PhotonView>().RPC("AddBarrierCollision", RpcTarget.AllBuffered);
+                }
+                PhotonNetwork.Destroy(gameObject);
+            }
+            // colisiono con el borde del mapa
+            if (collision.tag == "destroy_arrow")
+            {
+                // Destroy(collision.gameObject);
+                PhotonNetwork.Destroy(gameObject);
+            }            
         }
     }
 }
