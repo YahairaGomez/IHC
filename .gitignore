@@ -3,7 +3,7 @@ Build/
 .vs
 .vscode
 .idea
-.plastic
+.plastic/
 Temp/
 Library/
 UserSettings/

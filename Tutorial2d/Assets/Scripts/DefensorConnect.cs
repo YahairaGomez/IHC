@@ -9,6 +9,7 @@ using UnityEngine;
 using System.Threading;
 using UnityEngine.Windows.Speech;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 
 public class DefensorConnect : MonoBehaviour
@@ -33,58 +34,86 @@ public class DefensorConnect : MonoBehaviour
     private KeywordRecognizer keywordRecognizer;
     private List<string> actions = new List<string>();
     public GameObject Shield;
-    private int currShields = 0; // cantidad actual de escudos en el juego
-    [Range(0, 5)] public int maxShields = 3; // la máxima cantidad de escudos posibles en el juego
-
+    public int currShields; // cantidad actual de escudos en el juego
+    public int maxShields = 3; // la máxima cantidad de escudos posibles en el juego
+    
     [Range(2, 5)]
     public float destroyDelay = 3; // el tiempo en segundos que demoran en destruirse los escudos por defecto 3s
 
+    // solo se usara photon en la escena del juego
+    string sceneName;
+    
+    private void Awake()
+    {
+        sceneName = SceneManager.GetActiveScene().name;
+        currShields = 0;
+    }
+
+    private void Start()
+    {
+        if (sceneName == "Nivel1" || sceneName == "Instruction1")
+        {
+            receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
+
+            ThreadStart ts = new ThreadStart(GetInfo);
+            mThread = new Thread(ts);
+            mThread.Start();
+
+            vertExtentProjection = Camera.main.orthographicSize;
+            horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
+            pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
+            pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
+
+            // Debug.Log("horzExtent: " + horzExtentProjection);
+            // Debug.Log("vertExtent: " + vertExtentProjection);
+            //
+            // Debug.Log("screen width: " + Screen.width);
+            // Debug.Log("screen height: " + Screen.height);
+
+            // Estas son las tres palabras que podemos decir para poner un escudo
+            actions.Add("escudo");
+            actions.Add("defensa");
+            actions.Add("barrera");
+
+            keywordRecognizer = new KeywordRecognizer(actions.ToArray());
+            keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
+            keywordRecognizer.Start();
+        }
+    }
+
     private void Update()
     {
-        // solo si el jugador tiene asignado el defensor se puede mover
-        if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 1)
+        // para el juego y para el tutorial se podrá mover al defensor
+        if (sceneName == "Nivel1")
+        {
+            // solo si el jugador tiene asignado el defensor se puede mover
+            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 1)
+            {
+                Vector3 currPos = new Vector3(pendiente_W * receivedPos.x - horzExtentProjection,
+                    pendiente_H * receivedPos.y - vertExtentProjection, 0);
+                transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+
+                // con la tecla "b" puedes poner un escudo
+                if (Input.GetKeyUp("b") && currShields < maxShields)
+                {
+                    StartCoroutine(generateBarrier());
+                }
+            }
+        }
+        else if (sceneName == "Instruction1")
         {
             Vector3 currPos = new Vector3(pendiente_W * receivedPos.x - horzExtentProjection,
                 pendiente_H * receivedPos.y - vertExtentProjection, 0);
             transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
-            
-            // con la tecla espacio también puede poner un escudo
-            if (Input.GetKeyUp("space") && currShields < maxShields)
+
+            // con la tecla "b" puedes poner un escudo
+            if (Input.GetKeyUp("b") && currShields < maxShields)
             {
                 StartCoroutine(generateBarrier());
             }
         }
     }
-
-    private void Start()
-    {
-        receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
-
-        ThreadStart ts = new ThreadStart(GetInfo);
-        mThread = new Thread(ts);
-        mThread.Start();
-
-        vertExtentProjection = Camera.main.orthographicSize;
-        horzExtentProjection = vertExtentProjection * Screen.width / Screen.height;
-        pendiente_W = 2 * (horzExtentProjection / horzExtentAruco);
-        pendiente_H = 2 * (vertExtentProjection / vertExtentAruco);
-
-        // Debug.Log("horzExtent: " + horzExtentProjection);
-        // Debug.Log("vertExtent: " + vertExtentProjection);
-        //
-        // Debug.Log("screen width: " + Screen.width);
-        // Debug.Log("screen height: " + Screen.height);
-
-        // Estas son las tres palabras que podemos decir para poner un escudo
-        actions.Add("escudo");
-        actions.Add("defensa");
-        actions.Add("barrera");
-
-        keywordRecognizer = new KeywordRecognizer(actions.ToArray());
-        keywordRecognizer.OnPhraseRecognized += RecognizedSpeech;
-        keywordRecognizer.Start();
-    }
-
+    
     private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
         if (currShields < maxShields)
@@ -95,22 +124,47 @@ public class DefensorConnect : MonoBehaviour
 
     IEnumerator generateBarrier()
     {
-        //GameObject ShieldIns = Instantiate(Shield, transform.position, transform.rotation);
-        GameObject ShieldIns = PhotonNetwork.Instantiate(Shield.name, transform.position, Quaternion.identity);
-        currShields++; // aumentamos la cantidad de escudos en el juego
-
-        // actualizamos las barreras colocadas por el defensor
-        ScoreManager myScoreManager = GetComponent<ScoreManager>();
-        if (myScoreManager.GetComponent<PhotonView>().IsMine)
+        // para el juego
+        if (sceneName == "Nivel1")
         {
-            myScoreManager.GetComponent<PhotonView>().RPC("AddBarrierDefensor", RpcTarget.AllBuffered);
-        }
+            //GameObject ShieldIns = Instantiate(Shield, transform.position, transform.rotation);
+            GameObject ShieldIns = PhotonNetwork.Instantiate(Shield.name, transform.position, Quaternion.identity);
+            currShields++;
+            Debug.Log("Current shields: " + currShields);
+            // actualizamos las barreras colocadas por el defensor
+            ScoreManager myScoreManager = GetComponent<ScoreManager>();
+            if (myScoreManager.GetComponent<PhotonView>().IsMine)
+            {
+                myScoreManager.GetComponent<PhotonView>().RPC("AddBarrierDefensor", RpcTarget.AllBuffered);
+            }
+            // aumentamos la cantidad de escudos en el juego
+            
 
-        Debug.Log("Current shields: " + currShields);
-        // esperar destroyDelay segundos antes de destruir un objeto
-        yield return new WaitForSeconds(destroyDelay);
-        PhotonNetwork.Destroy(ShieldIns);
-        currShields--; // decrementamos los escudos en el juego una vez destruido
+            // esperar destroyDelay segundos antes de destruir un objeto
+            yield return new WaitForSeconds(destroyDelay);
+
+            if (currShields > 0)
+            {
+                currShields--;
+            }
+            PhotonNetwork.Destroy(ShieldIns); // decrementamos los escudos en el juego una vez destruido
+        }
+        else if (sceneName == "Instruction1") // para la escena del tutorial
+        {
+            GameObject ShieldIns = Instantiate(Shield, transform.position, transform.rotation);
+            // actualizamos las barreras colocadas por el defensor
+            currShields++; // aumentamos la cantidad de escudos en el juego
+
+            Debug.Log("Current shields: " + currShields);
+            // esperar destroyDelay segundos antes de destruir un objeto
+            yield return new WaitForSeconds(destroyDelay);
+
+            if (currShields > 0)
+            {
+                currShields--;
+            }
+            Destroy(ShieldIns); // decrementamos los escudos en el juego una vez destruido
+        }
     }
 
     void GetInfo()
@@ -180,8 +234,6 @@ public class DefensorConnect : MonoBehaviour
                 Console.WriteLine(e);
             }
         }
-
-        
         return result;
     }
     /*

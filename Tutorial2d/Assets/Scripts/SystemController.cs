@@ -10,6 +10,7 @@ using System.Threading;
 
 public class SystemController : MonoBehaviour
 {
+    private static Mutex mutex = new Mutex();
     // variables para el atacante
     public int disparos_atacante, puntaje_atacante;
 
@@ -23,7 +24,8 @@ public class SystemController : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    private bool running;
+    private NetworkStream nwStream;
+    private bool running, sendDataFlag; // sendDataFlag es un booleano para indicar que se enviarán datos
 
     
     // Start is called before the first frame update
@@ -44,27 +46,37 @@ public class SystemController : MonoBehaviour
         listener = new TcpListener(IPAddress.Any, connectionPort);
         listener.Start();
         client = listener.AcceptTcpClient();
-        // listener.Stop();
-    }
-    
-    void SendControllerData()
-    {
-        NetworkStream nwStream = client.GetStream();
-
-        string controllerData = disparos_atacante + "," + puntaje_atacante + "," 
-                                + barreras_defensor + "," + barreras_destruidas;
+        running = sendDataFlag = true;
+        while (running)
+        {
+            // solo si este flag se activa, enviaremos datos
+            if (sendDataFlag)
+            {
+                nwStream = client.GetStream();
+                string controllerData = disparos_atacante + "," + puntaje_atacante + "," 
+                                        + barreras_defensor + "," + barreras_destruidas;
         
-        byte[] myWriteBuffer =
-            Encoding.ASCII.GetBytes(controllerData); //Converting string to byte data
-        nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
+                byte[] myWriteBuffer =
+                    Encoding.ASCII.GetBytes(controllerData); //Converting string to byte data
+                nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python                            
+                mutex.WaitOne();
+                sendDataFlag = false;
+                mutex.ReleaseMutex();
+            }
+        }
+        listener.Stop();
     }
+
     
     public void updateScoresDisparosAtacante()
     {
         disparos_atacante++;
         print("Disparos: " + disparos_atacante);
+        
         // enviamos las estadísticas del juego al controlador del sistema
-        SendControllerData();
+        mutex.WaitOne();
+        sendDataFlag = true;
+        mutex.ReleaseMutex();
     }
     public void updateScoresPuntajeAtacante()
     {
@@ -73,7 +85,9 @@ public class SystemController : MonoBehaviour
         print("Puntaje: " + puntaje_atacante);
 
         // enviamos las estadísticas del juego al controlador del sistema
-        SendControllerData();
+        mutex.WaitOne();
+        sendDataFlag = true;
+        mutex.ReleaseMutex();
     }
     public void updateScoresBarrerasDefensor()
     {
@@ -81,7 +95,9 @@ public class SystemController : MonoBehaviour
         print("Barreras: " + barreras_defensor);
 
         // enviamos las estadísticas del juego al controlador del sistema
-        SendControllerData();
+        mutex.WaitOne();
+        sendDataFlag = true;
+        mutex.ReleaseMutex();
     }
     public void updateScoresBarrerasDestruidas()
     {
@@ -89,6 +105,8 @@ public class SystemController : MonoBehaviour
         print("Barreras destruidas: " + barreras_destruidas);
 
         // enviamos las estadísticas del juego al controlador del sistema
-        SendControllerData();
+        mutex.WaitOne();
+        sendDataFlag = true;
+        mutex.ReleaseMutex();
     }
 }

@@ -101,6 +101,7 @@ MonoBehaviour:
   connectionIP: 127.0.0.1
   connectionPort: 25001
   Shield: {fileID: 5702149950890720006, guid: a67a10a58a3be9e41a1b295926202689, type: 3}
+  currShields: 0
   maxShields: 3
   destroyDelay: 4
 --- !u!114 &-6240399922471167385

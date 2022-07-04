@@ -22,7 +22,7 @@ col1 = [
 col2 = [
     [sg.Text('Defensor', size=(15, 1), justification='left', font='Helvetica 13')],
     [sg.Text('Barreras: 0', size=(15, 1), justification='left', font='Helvetica 10', key='-BARRERAS_DEFENSOR-')],
-    [sg.Text('Barreras destruidas: 0', size=(20, 1), justification='left', font='Helvetica 10',
+    [sg.Text('Barreras impactadas: 0', size=(20, 1), justification='left', font='Helvetica 10',
              key='-BARRERAS_DESTRUIDAS_DEFENSOR-')],
 
     [sg.Text('Ganador', size=(15, 1), justification='left', font='Helvetica 13')],
@@ -71,7 +71,7 @@ def main():
             window['-PUNTAJE_ATACANTE-'].update(f"Puntaje: {values[event][1]}")
             window['-AVES_MUERTAS-'].update(f"Aves cazadas: {values[event][0]}")
             window['-BARRERAS_DEFENSOR-'].update(f"Barreras: {values[event][2]}")
-            window['-BARRERAS_DESTRUIDAS_DEFENSOR-'].update(f"Barreras destruidas: {values[event][3]}")
+            window['-BARRERAS_DESTRUIDAS_DEFENSOR-'].update(f"Barreras impactadas: {values[event][3]}")
             print("Statistics game: ", values[event])
 
 

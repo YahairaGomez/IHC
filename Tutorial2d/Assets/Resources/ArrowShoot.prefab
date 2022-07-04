@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ArrowShoot
       objectReference: {fileID: 0}
+    - target: {fileID: 3120219128301983893, guid: f55c3abf909b2ff4aa93997cacbf8982, type: 3}
+      propertyPath: m_TagString
+      value: ArrowCollision
+      objectReference: {fileID: 0}
     - target: {fileID: 5817795905526127679, guid: f55c3abf909b2ff4aa93997cacbf8982, type: 3}
       propertyPath: m_BodyType
       value: 0

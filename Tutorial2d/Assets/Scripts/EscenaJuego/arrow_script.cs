@@ -15,6 +15,7 @@ public class arrow_script : MonoBehaviour
     private void Awake()
     {
         sceneName = SceneManager.GetActiveScene().name;
+        print(sceneName);
     }
     
     // Start is called before the first frame update
@@ -75,14 +76,32 @@ public class arrow_script : MonoBehaviour
                 {
                     MyScoreManager.GetComponent<PhotonView>().RPC("AddBarrierCollision", RpcTarget.AllBuffered);
                 }
+                print("destroyed barrier");
                 PhotonNetwork.Destroy(gameObject);
             }
             // colisiono con el borde del mapa
             if (collision.tag == "destroy_arrow")
             {
-                // Destroy(collision.gameObject);
                 PhotonNetwork.Destroy(gameObject);
-            }            
+            }
+        }
+        else
+        {
+            if (collision.tag == "Choque")
+            {
+                Destroy(gameObject);
+            }
+            // colisiono con un escudo
+            if (collision.tag == "ShieldCollision")
+            {
+                Destroy(gameObject);
+            }
+            // colisiono con el borde del mapa
+            if (collision.tag == "destroy_arrow")
+            {
+                // Destroy(collision.gameObject);
+                Destroy(gameObject);
+            }   
         }
     }
 }

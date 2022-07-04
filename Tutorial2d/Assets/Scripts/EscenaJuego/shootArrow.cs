@@ -50,7 +50,7 @@ public class shootArrow : MonoBehaviour
             if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
             {
                 actions[speech.text].Invoke();
-            }            
+            }
         }
         else
         {
@@ -60,11 +60,12 @@ public class shootArrow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // solo el master puede disparar una flecha
-        if (Input.GetKeyUp("space"))
+        // Con la letra "a" puedes disparar una flecha
+        if (Input.GetKeyUp("a"))
         {
             if (sceneName == "Nivel1")
             {
+                // solo el master puede disparar una flecha
                 if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
                 {
                     shoot();
@@ -81,7 +82,6 @@ public class shootArrow : MonoBehaviour
     void shoot()
     {
         // instanciando con photon
-        
         if (sceneName == "Nivel1")
         {
             GameObject ArrowIns = PhotonNetwork.Instantiate(Arrow.name, transform.position, transform.rotation);
@@ -93,7 +93,7 @@ public class shootArrow : MonoBehaviour
             if (scoreManager.GetComponent<PhotonView>().IsMine)
             {
                 scoreManager.GetComponent<PhotonView>().RPC("AddDisparoAtacante", RpcTarget.AllBuffered);
-            }            
+            }
         }
         else
         {

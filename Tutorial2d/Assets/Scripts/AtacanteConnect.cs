@@ -33,7 +33,6 @@ public class AtacanteConnect : MonoBehaviour
     private float mPos_W, mPos_H, mRot_W, mRot_H;
     private float bPos_W, bPos_H, bRot_W, bRot_H;
     
-    
     bool running;
 
     private KeywordRecognizer keywordRecognizer;
@@ -47,26 +46,9 @@ public class AtacanteConnect : MonoBehaviour
         sceneName = SceneManager.GetActiveScene().name;
     }
 
-    private void Update()
-    {
-        if (sceneName == "Nivel1")
-        {
-            // solo el atacante puede actualizar el vector de posición
-            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
-            {
-                Vector3 currPos = new Vector3(mPos_W * receivedPos.x + bPos_W, 
-                    mPos_H * receivedPos.y + bPos_H, 0);
-                transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
-        
-                receivedRot = new Vector3(mRot_W * receivedRot.x + bRot_W, 
-                    mRot_H * receivedRot.y + bRot_H, 0);            
-            }            
-        }
-    }
-
     private void Start()
     {
-        if (sceneName == "Nivel1")
+        if (sceneName == "Nivel1" || sceneName == "Instruction1")
         {
             receivedRot = new Vector3(horzExtentAruco / 2, 0, 0); // llano al inicio
             receivedPos = new Vector3(horzExtentAruco / 2, vertExtentAruco / 2, 0);
@@ -100,7 +82,33 @@ public class AtacanteConnect : MonoBehaviour
         }
     }
 
-
+    private void Update()
+    {
+        // solo en la escena principal del juego y en el tutorial el atacante se podrá mover
+        if (sceneName == "Nivel1")
+        {
+            // solo el atacante puede actualizar el vector de posición
+            if ((int)PhotonNetwork.LocalPlayer.CustomProperties["personaje"] == 0)
+            {
+                Vector3 currPos = new Vector3(mPos_W * receivedPos.x + bPos_W, 
+                    mPos_H * receivedPos.y + bPos_H, 0);
+                transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+        
+                receivedRot = new Vector3(mRot_W * receivedRot.x + bRot_W, 
+                    mRot_H * receivedRot.y + bRot_H, 0);            
+            }            
+        }
+        else if (sceneName == "Instruction1")
+        {
+            Vector3 currPos = new Vector3(mPos_W * receivedPos.x + bPos_W, 
+                mPos_H * receivedPos.y + bPos_H, 0);
+            transform.position = currPos; //assigning receivedPos in SendAndReceiveData()
+        
+            receivedRot = new Vector3(mRot_W * receivedRot.x + bRot_W, 
+                mRot_H * receivedRot.y + bRot_H, 0);            
+        }
+    }
+    
     void GetInfo()
     {
         localAdd = IPAddress.Parse(connectionIP);
@@ -168,13 +176,6 @@ public class AtacanteConnect : MonoBehaviour
                 result.x = float.Parse(sArray[1]);
                 result.y = float.Parse(sArray[2]);
                 result.z = float.Parse(sArray[3]);
-                // significa que también recibimos el vector de rotación
-                if (sArray.Length > 4)
-                {
-                    rotVec.x = float.Parse(sArray[4]);
-                    rotVec.y = float.Parse(sArray[5]);
-                    rotVec.z = float.Parse(sArray[6]);
-                }
             }
             catch (FormatException e)
             {
