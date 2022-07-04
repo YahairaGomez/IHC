@@ -6,9 +6,11 @@ Build/
 .plastic/
 Temp/
 Library/
+Packages/
+ProjectSettings/
 UserSettings/
-Logs
-obj
+Logs/
+obj/
 *.csproj
 *.sln
 *.conf
